@@ -3,9 +3,20 @@
 ## 1. System Design
 
 **a. Initial design**
+ 
+Three core tasks: 
+1. add a pet
+2. add/delete a task
+3. see today's task 
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
+
+The Owner class stores the owner's name, a list of pets, and a reference to a Scheduler, with methods to add, remove, and edit pets.
+The Pet class stores basic information about each pet: name, gender, and age.
+The Task class acts as a data container holding a task's associated pet, activity, available time, priority, and owner preferences.
+The Scheduler class manages all tasks through a task list, with methods to add, remove, and edit them.
+                 
 
 **b. Design changes**
 
@@ -69,3 +80,121 @@
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+
+
+
+
+Notes:
+
+(original)
+Owner
+    Attributes: 
+        - name
+        - constraints list 
+        - pets list 
+    Methods:
+        - add constraints
+        - remove constraints
+        - edit constraints
+
+
+Pet
+    Attributes: 
+        - name
+        - gender
+        - age
+    Methods:
+        - add pets
+        - remove pets
+        - edit pets
+    
+*can pet add itself, who adds a pet? 
+
+
+Task (just a thing)
+    Attributes: 
+        - task list 
+    Methods;
+        - add tasks
+        - remove tasks 
+        - edit tasks 
+
+*added task list but Task is the single thing, not list 
+
+Scheduler (manages that thing) 
+        Attributes: 
+        - name
+
+
+
+
+
+(Updated)
+Owner
+    Attributes: 
+        - name
+        - scheduler 
+        - pets list 
+    Methods:
+        - add, remove, edit pets 
+
+Pet
+    Attributes: 
+        - name
+        - gender
+        - age
+
+Task (just a thing)
+    Attributes: 
+        - pet 
+        - task activty 
+        - time availble 
+        - priority 
+        - owner preference 
+
+Scheduler (manages that thing) 
+    Attributes: 
+        - task list  
+    Methods:
+        - add, remove, edit task  
+
+
+the owner manages the pets and scheduler 
+the pet doesnt manage anything
+the task holds constraints and knows the pet the task is associated with  
+the scheudle manages the tasks  
+
+
+(Point: constraints are fixed attributes and not objects
+     No need for list of contriants. no need for schedule to add constraints, made when add task )
+
+
+Mermaid.js
+
+                                                                                            
+  classDiagram                                                                            
+      class Owner {
+          +String name
+          +addPet(pet: Pet)
+          +removePet(pet: Pet)
+          +editPet(pet: Pet)
+      }
+
+      class Pet {
+          +String name
+          +String gender
+          +int age
+      }
+
+      class Task {
+          +String taskActivity
+          +String timeAvailable                                                             
+          +int priority
+          +String ownerPreference                                                           
+      }           
+
+      class Scheduler {
+          +addTask(task: Task)
+          +removeTask(task: Task)
+          +editTask(task: Task)
+      }                                                                    
