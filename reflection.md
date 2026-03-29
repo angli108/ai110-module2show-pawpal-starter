@@ -6,7 +6,7 @@
  
 Three core tasks: 
 1. add a pet
-2. add/delete a task
+2. add task to take pet to vet
 3. see today's task 
 
 - Briefly describe your initial UML design.
@@ -16,13 +16,44 @@ The Owner class stores the owner's name, a list of pets, and a reference to a Sc
 The Pet class stores basic information about each pet: name, gender, and age.
 The Task class acts as a data container holding a task's associated pet, activity, available time, priority, and owner preferences.
 The Scheduler class manages all tasks through a task list, with methods to add, remove, and edit them.
-                 
+
+classDiagram
+    class Owner {
+        +String name
+        +addPet(pet)
+        +removePet(pet)
+        +editPet(pet)
+    }
+
+    class Pet {
+        +String name
+        +String gender
+        +int age
+    }
+
+    class Task {
+        +String taskActivity
+        +String timeAvailable
+        +int priority
+        +String ownerPreference
+    }
+
+    class Scheduler {
+        +addTask(task)
+        +removeTask(task)
+        +editTask(task)
+    }
+
+    Owner "1" *-- "1" Scheduler : has
+    Owner "1" *-- "0..*" Pet : owns
+    Scheduler "1" o-- "0..*" Task : manages
+    Task "0..*" --> "1" Pet : for
 
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
-
+  Yes my design changed, I orginally had the scheduler own the task list, but then I changed it to Pet. Also I changed the Scheduler to query across pets, not hold tasks itself.
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
