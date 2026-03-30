@@ -15,10 +15,6 @@ A Streamlit app that helps pet owners plan and track daily care tasks for their 
 
 ## 📸 Demo
 
-<a href="/course_images/ai110/demo_1.png" target="_blank"><img src='/course_images/ai110/demo_1.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
-
-<a href="/course_images/ai110/demo_2.png" target="_blank"><img src='/course_images/ai110/demo_2.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
-
 ![PawPal App Demo 1](demo_1.png)
 ![PawPal App Demo 2](demo_2.png)
 
