@@ -62,12 +62,13 @@ classDiagram
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
+I decided on time avaible, priority, owner preference, frewquency, completion time, and due date. I decided that time is the most important aspect, such as conflicting time is addressed, and priority so owners have more control over what matters.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
-
+A tradeoff my scheduler makes is that it can sort by priority or by time, but not both at once.A pet owner checking their morning schedule has a clear mental model they already know their pet's walk is high priority, and they already know feeding happens at 7am. They don't need the app to weigh those against each other.One simple sort is enough for each of those decisions.                                          
 ---
 
 ## 3. AI Collaboration
@@ -76,12 +77,13 @@ classDiagram
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
+During this project I used AI to help improve my initial UML design, create test cases for me, and to help refator based on the improvements I wanted to make on the project. The kind of prompts that were most helpful were ones that are very detailed. I found online that following PACE framework helps (Purpose, Action, Context, Explain/Format).
 
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
-
+The AI suggested replacing the loop in detect_conflicts() with a shorter one-liner using intertool.combinations. Although the shorter version would look cleaner, it was harder to understand at a glance. The original loop made it obvious what was happening. Since both versions work the same way, the original was kept because it was easier to read.
 ---
 
 ## 4. Testing and Verification

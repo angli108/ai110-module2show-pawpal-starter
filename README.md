@@ -22,6 +22,10 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Smarter Scheduling
+
+The scheduler does more than sort tasks by priority. It can sort tasks by actual time so 9:00 AM always comes before 10:00 AM. It checks for conflicts and warns you if two tasks are scheduled at the same time. When you mark a daily or weekly task as done, it automatically creates the next one so nothing gets forgotten. You can also filter tasks by pet or by whether they have been completed.
+
 ## Getting started
 
 ### Setup
