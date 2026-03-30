@@ -194,6 +194,160 @@ def test_no_conflict_with_no_tasks():
     assert owner.scheduler.detect_conflicts() == []
 
 
+# ---------------------------------------------------------------------------
+# Due date / date-based scheduling (new feature)
+# ---------------------------------------------------------------------------
+
+def test_task_due_date_defaults_to_today():
+    """A task created without an explicit due_date should be due today."""
+    task = make_task()
+    assert task.due_date == date.today()
+
+
+def test_task_accepts_custom_due_date():
+    """A task created with a future due_date stores it correctly."""
+    future = date.today() + timedelta(days=3)
+    task = Task(
+        task_activity="Grooming",
+        time_available="2:00 PM",
+        priority=3,
+        owner_preference="brush only",
+        frequency="weekly",
+        due_date=future,
+    )
+    assert task.due_date == future
+
+
+def test_today_task_included_in_schedule():
+    """A task due today passes the due_date <= today filter."""
+    task = make_task(activity="Walk")
+    task.due_date = date.today()
+    assert task.due_date <= date.today()
+
+
+def test_future_task_excluded_from_schedule():
+    """A task due tomorrow should not appear in today's schedule."""
+    task = make_task(activity="Bath")
+    task.due_date = date.today() + timedelta(days=1)
+    assert not (task.due_date <= date.today())
+
+
+def test_overdue_task_included_in_schedule():
+    """A task whose due_date has already passed should still appear."""
+    task = make_task(activity="Vet visit")
+    task.due_date = date.today() - timedelta(days=2)
+    assert task.due_date <= date.today()
+
+
+def test_filter_tasks_excludes_future_due_dates():
+    """filter_tasks returns all tasks; date filtering applied afterwards excludes future ones."""
+    today = date.today()
+    pet = Pet(name="Buddy", gender="Male", age=3)
+    pet.add_task(Task(task_activity="Walk", time_available="8:00 AM", priority=1,
+                      owner_preference="leash", frequency="daily", due_date=today))
+    pet.add_task(Task(task_activity="Bath", time_available="10:00 AM", priority=2,
+                      owner_preference="gentle", frequency="weekly",
+                      due_date=today + timedelta(days=5)))
+
+    owner = make_owner_with_pets(pet)
+    all_tasks = owner.scheduler.filter_tasks()
+    todays_tasks = [(p, t) for p, t in all_tasks if t.due_date <= today]
+
+    assert len(todays_tasks) == 1
+    assert todays_tasks[0][1].task_activity == "Walk"
+
+
+# ---------------------------------------------------------------------------
+# Delete task bug — remove_task actually removes the task
+# ---------------------------------------------------------------------------
+
+def test_remove_task_decreases_count():
+    """remove_task should reduce the pet's task list by one."""
+    pet = Pet(name="Rex", gender="Male", age=2)
+    task = make_task("Walk")
+    pet.add_task(task)
+    assert len(pet.tasks) == 1
+    pet.remove_task(task)
+    assert len(pet.tasks) == 0
+
+
+def test_remove_task_removes_correct_task():
+    """remove_task removes only the specified task, leaving others intact."""
+    pet = Pet(name="Luna", gender="Female", age=3)
+    task_a = make_task("Walk", "8:00 AM")
+    task_b = make_task("Feeding", "12:00 PM")
+    pet.add_task(task_a)
+    pet.add_task(task_b)
+
+    pet.remove_task(task_a)
+
+    assert task_a not in pet.tasks
+    assert task_b in pet.tasks
+
+
+def test_remove_task_not_in_list_raises():
+    """remove_task raises ValueError when the task is not in the list."""
+    pet = Pet(name="Cleo", gender="Female", age=1)
+    task = make_task("Walk")
+    with pytest.raises(ValueError):
+        pet.remove_task(task)
+
+
+# ---------------------------------------------------------------------------
+# Edit task
+# ---------------------------------------------------------------------------
+
+def test_edit_task_replaces_at_correct_index():
+    """edit_task should replace the old task in-place."""
+    pet = Pet(name="Mochi", gender="Female", age=2)
+    original = make_task("Walk", "8:00 AM")
+    other = make_task("Feeding", "12:00 PM")
+    pet.add_task(original)
+    pet.add_task(other)
+
+    updated = make_task("Run", "8:00 AM")
+    pet.edit_task(original, updated)
+
+    assert pet.tasks[0].task_activity == "Run"
+    assert pet.tasks[1].task_activity == "Feeding"
+
+
+# ---------------------------------------------------------------------------
+# Remove / edit pet
+# ---------------------------------------------------------------------------
+
+def test_remove_pet_decreases_count():
+    """remove_pet should reduce the owner's pet list by one."""
+    pet = Pet(name="Buddy", gender="Male", age=3)
+    owner = make_owner_with_pets(pet)
+    assert len(owner.pets) == 1
+    owner.remove_pet(pet)
+    assert len(owner.pets) == 0
+
+
+def test_remove_pet_removes_correct_pet():
+    """remove_pet removes only the specified pet."""
+    pet_a = Pet(name="Buddy", gender="Male", age=3)
+    pet_b = Pet(name="Luna", gender="Female", age=2)
+    owner = make_owner_with_pets(pet_a, pet_b)
+
+    owner.remove_pet(pet_a)
+
+    assert pet_a not in owner.pets
+    assert pet_b in owner.pets
+
+
+def test_edit_pet_replaces_at_correct_index():
+    """edit_pet should swap the old pet entry with the updated one."""
+    pet = Pet(name="Buddy", gender="Male", age=3)
+    owner = make_owner_with_pets(pet)
+
+    updated = Pet(name="Buddy", gender="Male", age=4)
+    owner.edit_pet(pet, updated)
+
+    assert owner.pets[0].age == 4
+
+
 if __name__ == "__main__":
     test_mark_complete_changes_status()
     print("PASSED: mark_complete changes task status")

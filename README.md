@@ -1,6 +1,23 @@
-# PawPal+ (Module 2 Project)
+# PawPal+
 
-You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
+A Streamlit app that helps pet owners plan and track daily care tasks for their pets.
+
+## Features
+
+- Chronological sorting: Tasks are sorted by actual time of day using time parsing, so `9:00 AM` always appears before `10:00 AM` regardless of input order
+- Conflict detection: The scheduler scans all pending tasks and warns you if two tasks are scheduled at the same time, naming both tasks and pets involved
+- Automatic recurrence: Marking a `daily` or `weekly` task complete auto-schedules the next occurrence with the correct due date, so nothing gets forgotten
+- Completion filtering: A checkbox toggles between showing all tasks or pending-only, powered by the `filter_tasks()` method
+- Priority sorting: Tasks can also be ranked by priority (1 = highest) as an alternative view
+- Pet management: Add multiple pets, each with their own independent task list
+- Date-based scheduling: Tasks can be scheduled for any date; Generate Schedule only shows tasks due today or earlier, so future tasks stay out of the way until their day arrives
+- Inline edit and delete: Tasks in the schedule can be edited or deleted directly; changes take effect immediately without needing to regenerate the schedule
+
+## 📸 Demo
+
+<a href="/course_images/ai110/demo_1.png" target="_blank"><img src='/course_images/ai110/demo_1.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
+
+<a href="/course_images/ai110/demo_2.png" target="_blank"><img src='/course_images/ai110/demo_2.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
 
 ## Scenario
 
@@ -24,7 +41,7 @@ Your final app should:
 
 ## Smarter Scheduling
 
-The scheduler does more than sort tasks by priority. It can sort tasks by actual time so 9:00 AM always comes before 10:00 AM. It checks for conflicts and warns you if two tasks are scheduled at the same time. When you mark a daily or weekly task as done, it automatically creates the next one so nothing gets forgotten. You can also filter tasks by pet or by whether they have been completed.
+The scheduler does more than sort tasks by priority. It can sort tasks by actual time so 9:00 AM always comes before 10:00 AM. It checks for conflicts and warns you if two tasks are scheduled at the same time. When you mark a daily or weekly task as done, it automatically creates the next one so nothing gets forgotten. You can also filter tasks by pet or by whether they have been completed. Tasks can be added with any future date and will only appear in the generated schedule once their due date arrives.
 
 ## Getting started
 
@@ -61,9 +78,13 @@ python -m pytest tests/test_pawpal.py -v
 - Sorting correctness: Tasks are returned in chronological order; `9:00 AM` sorts before `10:00 AM` (guards against broken string comparison); unparseable times land at the end
 - Recurrence logic: Completing a `daily` task creates a new task due the next day; `weekly` creates one 7 days later; `once` / non-recurring returns `None` with no new task added
 - Conflict detection: Two pending tasks at the same time produce a warning; different times produce none; completed tasks are excluded from conflict checks; no tasks → no crash
+- Due date scheduling: `due_date` defaults to today; future-dated tasks are correctly excluded from today's schedule; overdue tasks are included; `filter_tasks` combined with the date filter returns only eligible tasks
+- Delete task bug: `remove_task` reduces the task count, removes only the correct task, and raises `ValueError` when the task is not found
+- Edit task: `edit_task` replaces the task at the right index without affecting other tasks
+- Pet management: `remove_pet` removes the correct pet; `edit_pet` updates the pet in place
 
 ### Confidence Level
 
 **★★★★☆ (4/5)**
 
-The core scheduling behaviors — sorting, recurrence, and conflict detection — are all covered by focused unit tests with both happy-path and edge-case scenarios. Confidence is high that the business logic in `Scheduler` is correct. One star is held back because the Streamlit UI layer (`app.py`) has no automated tests, so end-to-end user flows (form input, session state, rendering) remain unverified.
+All core scheduling behaviors and the new date-based scheduling feature are covered by focused unit tests with both happy-path and edge-case scenarios, including the delete and edit bugs that were found and fixed. Confidence is high that the business logic is correct. One star is held back because the Streamlit UI layer (`app.py`) has no automated tests, so end-to-end user flows (form input, session state, rendering) remain unverified.

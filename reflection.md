@@ -106,15 +106,17 @@ The AI suggested replacing the loop in detect_conflicts() with a shorter one-lin
 
 - What part of this project are you most satisfied with?
 
+I felt most satisfied when I looked at the finished product. Starting from a blank UML diagram and ending up with a working Streamlit app with real scheduling logic felt like a big jump. It felt satisfying to see what I brainstromed for the four classes in action in the live demo.
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
-
+The biggest thing I'd fix is making data save between sessions, right now everything disappears when you refresh the page. I'd also add a time picker so users can't accidentally type a time the app can't understand.
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
 
-
+I learned that I have to be specific when communicating with AI and that it is a support tool where I should be the main brain for this project. 
 
 
 Notes:
